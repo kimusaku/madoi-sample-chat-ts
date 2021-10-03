@@ -1,5 +1,13 @@
 import { Madoi, Share } from "./madoi/madoi";
 
+window.addEventListener("load", function () {
+    const m = new Madoi(`wss://fungo.kcg.edu/madoi-20210702/rooms/chat-o3i4falskdjj`);
+    const chat = new Chat(
+        "#chatForm", "#nameInput",
+        "#messageInput", "#chatLogDiv");
+    m.shareObject(chat);
+});
+
 class Chat{
     private nameInput: HTMLInputElement;
     private messageInput: HTMLInputElement;
@@ -30,9 +38,3 @@ class Chat{
         this.logDiv.scrollTop = this.logDiv.scrollHeight;
     }
 }
-
-window.addEventListener("load", function () {
-    const m = new Madoi(`wss://fungo.kcg.edu/madoi-20210702/rooms/chat-o3i4falskdjj`);
-    m.shareObject(new Chat("#chatForm", "#nameInputText",
-        "#chatInputText", "#chatLogDiv"));
-});
