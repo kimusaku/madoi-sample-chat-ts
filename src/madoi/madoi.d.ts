@@ -1,72 +1,54 @@
 export declare function ShareClass(option?: any): (target: any) => void;
-export interface ShareOption {
+export interface ShareConfig {
     type?: "beforeExec" | "afterExec";
     maxLog?: number;
+    allowedTo?: string[];
+    update?: {
+        freq?: number;
+        interpolateBy?: number;
+        reckonUntil?: number;
+    };
 }
-export declare function Share(config?: ShareOption): (target: any, name: string, descriptor: PropertyDescriptor) => void;
+export declare function Share(config?: ShareConfig): (target: any, name: string, descriptor: PropertyDescriptor) => void;
+export interface GetStateConfig {
+    maxInterval?: number;
+    maxUpdates?: number;
+}
+export declare function GetState(config?: GetStateConfig): (target: any, name: string, descriptor: PropertyDescriptor) => void;
+export interface SetStateConfig {
+}
+export declare function SetState(config?: SetStateConfig): (target: any, name: string, descriptor: PropertyDescriptor) => void;
+export interface MethodConfig {
+    share?: ShareConfig;
+    getState?: GetStateConfig;
+    setState?: SetStateConfig;
+}
 interface PeerInfo {
     peerId: string;
     order: number;
 }
-interface EnterRoom {
-    type: "EnterRoom";
-    sender: "__SYSTEM__";
-    peerId: string;
-    peers: PeerInfo[];
-    histories: StoredMessageType[];
-}
-interface LeaveRoom {
-    type: "LeaveRoom";
-    sender: "__SYSTEM__";
-    peerId: string;
-}
-interface PeerJoin {
-    type: "PeerJoin";
-    sender: "__SYSTEM__";
-    peerId: string;
-}
-interface PeerLeave {
-    type: "PeerLeave";
-    sender: "__SYSTEM__";
-    peerId: string;
-}
-interface Invocation {
-    type: "Invocation";
-    sender: string;
-    methodIndex: number;
-    args: any[];
-}
-interface ObjectState {
-    type: "ObjectState";
-    sender: string;
-    objectIndex: number;
-    state: string;
-}
-declare type StoredMessageType = Invocation | ObjectState;
-declare type DowanStreamMessageType = EnterRoom | LeaveRoom | PeerJoin | PeerLeave | Invocation | ObjectState;
 export declare class Madoi {
     private connecting;
-    private connectionConfig;
-    private objectConfigs;
-    private methodConfigs;
+    private interimQueue;
     private sharedFunctions;
     private sharedObjects;
+    private getStateMethods;
+    private setStateMethods;
     private promises;
     private changedObjects;
     private handlers;
     private ws;
     private selfPeerId;
     private currentSenderPeerId;
-    constructor(servicePath: string, key?: string, options?: object);
+    constructor(servicePath: string, key?: string, options?: {});
     getCurrentSenderPeerId(): string | null;
     isSelfCall(): boolean;
     close(): void;
-    sendConfigs(): void;
-    handleOnOpen(e: Event): void;
-    handleOnClose(e: CloseEvent): void;
-    handleOnError(e: Event): void;
-    handleOnMessage(e: MessageEvent): void;
-    data(msg: DowanStreamMessageType): void;
+    private handleOnOpen;
+    private handleOnClose;
+    private handleOnError;
+    private handleOnMessage;
+    private data;
     onOpen(_e: Event): void;
     onClose(_e: Event): void;
     onError(_e: Event): void;
@@ -75,10 +57,12 @@ export declare class Madoi {
     onLeaveRoom(): void;
     onPeerJoin(peerId: string): void;
     onPeerLeave(peerId: string): void;
-    send(type: string, body: any, headers: any): void;
-    share(f: Function, config: any, objectIndex: number): Function;
-    shareObject(obj: any, methods?: Function[], config?: any): void;
-    saveStates(): void;
+    send(type: string, body: object, headers: object): void;
+    sendMessage(msg: object): void;
+    register(obj: any, methodAndConfigs?: [Function, MethodConfig][]): void;
+    registerFunction(func: Function, config: ShareConfig): () => any;
+    private addSharedFunction;
+    private saveStates;
     private applyInvocation;
 }
 export {};

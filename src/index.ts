@@ -1,11 +1,11 @@
 import { Madoi, Share } from "./madoi/madoi";
 
 window.addEventListener("load", function () {
-    const m = new Madoi(`wss://fungo.kcg.edu/madoi-20210702/rooms/chat-o3i4falskdjj`);
+    const m = new Madoi(`wss://fungo.kcg.edu/madoi-20211003/rooms/chat-o3i4falskdjj`);
     const chat = new Chat(
         "#chatForm", "#nameInput",
         "#messageInput", "#chatLogDiv");
-    m.shareObject(chat);
+    m.register(chat);
 });
 
 class Chat{
@@ -29,7 +29,7 @@ class Chat{
         });
     }
 
-    @Share()
+    @Share({maxLog: 1000})
     send(name: string, message: string){
         const textSpan = document.createElement("span");
         textSpan.append(name + ": " + message);
