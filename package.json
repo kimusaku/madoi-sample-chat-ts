@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kcg-edu-future-lab/presense.git"
+    "url": "git+https://github.com/kcg-edu-future-lab/madoi-sample-chat-ts.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kcg-edu-future-lab/presense/issues"
+    "url": "https://github.com/kcg-edu-future-lab/madoi-sample-chat-ts/issues"
   },
-  "homepage": "https://github.com/kcg-edu-future-lab/presense#readme",
+  "homepage": "https://github.com/kcg-edu-future-lab/madoi-sample-chat-ts#readme",
   "devDependencies": {
     "ts-loader": "^9.1.2",
     "tslint": "^6.1.3",
