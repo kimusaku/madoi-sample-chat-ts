@@ -1,40 +1,77 @@
-import { Madoi, Share } from "./madoi/madoi";
+import { GetState, Madoi, SetState, Share } from "./madoi/madoi";
 
 window.addEventListener("load", function () {
-    const m = new Madoi(`wss://fungo.kcg.edu/madoi-20211003/rooms/chat-o3i4falskdjj`);
-    const chat = new Chat(
-        "#chatForm", "#nameInput",
-        "#messageInput", "#chatLogDiv");
+    // Chatクラスのインスタンスを作成する。
+    const chat = new Chat("#chatForm", "#name", "#message", "#chatLog");
+
+    // Madoiライブラリを使ってサービスに接続する。引数の"room/"以降はセッション識別文字列。
+    const m = new Madoi(`wss://fungo.kcg.edu/madoi-20211030/rooms/chat-o3i4falskdjj`);
+
+    // chatインスタンスを登録する。共有に関するメソッドの情報はアノテーション(@???)から取得される。
     m.register(chat);
 });
 
 class Chat{
+    private chatForm: HTMLFormElement;
     private nameInput: HTMLInputElement;
     private messageInput: HTMLInputElement;
     private logDiv: HTMLDivElement;
-    constructor(sendFormId: string, nameInputId: string,
-        messageInputId: string, logDivId: string){
-        this.nameInput = document.querySelector(nameInputId)!;
-        this.messageInput = document.querySelector(messageInputId)!;
-        this.logDiv = document.querySelector(logDivId)!;
-        const sendForm: HTMLFormElement = document.querySelector(sendFormId)!;
-        sendForm.addEventListener("submit", event => {
-            event.preventDefault();
+    private logs: string[] = [];
+    constructor(formSelector: string, nameSelector: string,
+        messageSelector: string, logSelector: string){
+        // HTML内のタグをJavaScriptから操作するために，対応するElementオブジェクトを取り出す。
+        this.chatForm = document.querySelector(formSelector)!;
+        this.nameInput = document.querySelector(nameSelector)!;
+        this.messageInput = document.querySelector(messageSelector)!;
+        this.logDiv = document.querySelector(logSelector)!;
+        // チャットフォームのsubmitイベントで，chat.addMessageを実行する。
+        this.chatForm.addEventListener("submit", e => {
+            e.preventDefault();
             const name = this.nameInput.value.trim();
-            const text = this.messageInput.value.trim();
-            if(text.length == 0) return false;
+            const message = this.messageInput.value.trim();
+            if(message.length == 0) return false;
             this.messageInput.value = "";
-            this.send(name, text);
-            return false;
+            // addMessage実行。プロキシが実行される。本来のaddMessageはサービスからメッセージが届いた際に実行される。
+            this.addMessage(name, message);
         });
     }
 
-    @Share({maxLog: 1000})
-    send(name: string, message: string){
-        const textSpan = document.createElement("span");
-        textSpan.append(name + ": " + message);
-        this.logDiv.append(textSpan);
-        this.logDiv.append(document.createElement("br"));
+    // ログ領域にチャットメッセージを追加するメソッド
+    @Share()
+    addMessage(name: string, message: string){
+        const log = name + ": " + message;
+        this.appendLog(log);
+        this.logDiv.scrollTop = this.logDiv.scrollHeight;
+        this.logs.push(log);
+        // 100件以上は保持しないようにする。
+        if(this.logs.length > 100){
+            this.logs.splice(0, this.logs.length - 100);
+        }
+    }
+
+    // ログ領域にログを追加するメソッド
+    private appendLog(log: string){
+        const span = document.createElement("span");
+        const br = document.createElement("br");
+        span.append(log);
+        this.logDiv.append(span);
+        this.logDiv.append(br);
+    }
+
+    // 状態を取得するメソッド。
+    @GetState()
+    getState(){
+        return JSON.stringify(this.logs);
+    }
+
+    @SetState()
+    // 状態を設定するメソッド
+    setState(state: string){
+        this.logs = JSON.parse(state);
+        this.logDiv.innerHTML = "";
+        for(let log of this.logs){
+            this.appendLog(log);
+        }
         this.logDiv.scrollTop = this.logDiv.scrollHeight;
     }
 }

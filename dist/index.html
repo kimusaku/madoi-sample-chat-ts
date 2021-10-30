@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <style>
-#chatLogDiv {
+#chatLog {
     overflow: scroll;
     resize: vertical;
-    height: 400px;
+    min-height: 200px;
     border: solid 1px;
     padding: 4;
     border-radius: 4px;
@@ -16,12 +16,12 @@
 <body>
 <form id="chatForm">
     <div>
-        <input id="nameInput" size="8" type="text" value="匿名">
-        <input id="messageInput" size="20" type="text" placeholder="送信するメッセージ">
+        <input id="name" size="8" type="text" value="匿名">
+        <input id="message" size="20" type="text" placeholder="送信するメッセージ">
         <button type="submit">送信</button>
     </div>
 </form>
-<div id="chatLogDiv"></div>
+<div id="chatLog"></div>
 <script src="index.js"></script>
 </body>
 </html>
