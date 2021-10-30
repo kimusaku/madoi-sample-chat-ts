@@ -1,13 +1,13 @@
 import { GetState, Madoi, SetState, Share } from "./madoi/madoi";
 
-window.addEventListener("load", function () {
+window.addEventListener("load", ()=>{
     // Chatクラスのインスタンスを作成する。
     const chat = new Chat("#chatForm", "#name", "#message", "#chatLog");
 
     // Madoiライブラリを使ってサービスに接続する。引数の"room/"以降はセッション識別文字列。
     const m = new Madoi(`wss://fungo.kcg.edu/madoi-20211030/rooms/chat-o3i4falskdjj`);
 
-    // chatインスタンスを登録する。共有に関するメソッドの情報はアノテーション(@???)から取得される。
+    // chatインスタンスを登録する。共有に関するメソッドの情報はデコレータ(@???)から取得される。
     m.register(chat);
 });
 
