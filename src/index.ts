@@ -1,4 +1,4 @@
-import { GetState, Madoi, SetState, Share } from "./madoi/madoi";
+import { Madoi, Share, GetState, SetState } from "./madoi/madoi";
 
 window.addEventListener("load", function () {
     // Chatクラスのインスタンスを作成する。
